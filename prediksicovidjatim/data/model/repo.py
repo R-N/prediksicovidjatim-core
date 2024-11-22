@@ -14,7 +14,7 @@ def fetch_kabko_need_fitting(tanggal, cur=None):
 def _fetch_kabko_need_fitting(tanggal, cur):
     cur.execute("""
         SELECT k.kabko
-        FROM main.kabko k
+        FROM prediksicovidjatim.kabko k
         WHERE k.last_fit<%s
         ORDER BY k.kabko
     """, (tanggal,))
@@ -31,10 +31,10 @@ def fetch_kabko_scored(cur=None):
 def _fetch_kabko_scored(cur):
     cur.execute("""
         SELECT k.kabko, k.text 
-        FROM main.kabko k
+        FROM prediksicovidjatim.kabko k
         WHERE k.kabko IN (
             SELECT DISTINCT s.kabko
-            FROM main.scores s
+            FROM prediksicovidjatim.scores s
         )
         ORDER BY k.kabko
     """)
@@ -58,7 +58,7 @@ def _fetch_day_data(kabko, cur):
             pos_rawat_total AS infectious_all,
             pos_sembuh AS recovered,
             pos_meninggal AS dead
-        FROM main.raw_covid_data
+        FROM prediksicovidjatim.raw_covid_data
         WHERE kabko=%s
         ORDER BY tanggal
     """, (kabko,))
@@ -87,7 +87,7 @@ def _fetch_param_data(kabko, cur):
             p.vary,
             p.expr,
             pk.stderr
-        FROM main.parameter_kabko pk, main.parameter p
+        FROM prediksicovidjatim.parameter_kabko pk, prediksicovidjatim.parameter p
         WHERE pk.parameter=p.parameter AND kabko=%s
         ORDER BY pk.parameter
     """, (kabko,))
@@ -106,7 +106,7 @@ def _fetch_kapasitas_rs(kabko, cur):
         SELECT 
             tanggal,
             kapasitas
-        FROM main.kapasitas_rs
+        FROM prediksicovidjatim.kapasitas_rs
         WHERE kabko=%s
         ORDER BY tanggal
     """, (kabko,))
@@ -128,7 +128,7 @@ def _fetch_rt_data(kabko, cur):
             min,
             max,
             stderr
-        FROM main.rt
+        FROM prediksicovidjatim.rt
         WHERE kabko=%s
         ORDER BY tanggal
     """, (kabko,))
@@ -153,9 +153,9 @@ def _get_kabko(kabko, cur):
             rcd.pos_total AS seed,	
             CASE WHEN k.kabko IN (
                 SELECT DISTINCT s.kabko
-                FROM main.scores s
+                FROM prediksicovidjatim.scores s
             ) THEN 1 ELSE 0 END AS scored
-        FROM main.kabko k, main.first_pos_date fpd, main.raw_covid_data rcd
+        FROM prediksicovidjatim.kabko k, prediksicovidjatim.first_pos_date fpd, prediksicovidjatim.raw_covid_data rcd
         WHERE k.kabko=fpd.kabko AND k.kabko=rcd.kabko AND rcd.tanggal=fpd.tanggal AND k.kabko=%s
     """, (kabko,))
     
@@ -189,7 +189,7 @@ def update_params_init(kabko, filtered_params, cur=None):
 def _update_params_init(kabko, filtered_params, cur):
     cur.execute('''
         PREPARE update_params_init AS 
-        UPDATE main.parameter_kabko 
+        UPDATE prediksicovidjatim.parameter_kabko 
         SET init=$1, stderr=$2
         WHERE "parameter"=$3
             AND kabko=$4
@@ -213,7 +213,7 @@ def update_rt_init(kabko, rts, cur=None):
 def _update_rt_init(kabko, rts, cur):
     cur.execute('''
         PREPARE update_rt_init AS 
-        UPDATE main.rt 
+        UPDATE prediksicovidjatim.rt 
         SET init=$1, stderr=$2
         WHERE tanggal=$3
             AND kabko=$4
@@ -235,13 +235,13 @@ def update_kabko(kabko, outbreak_shift, tanggal=None, cur=None):
 def _update_kabko(kabko, outbreak_shift, tanggal, cur):
     if tanggal:
         cur.execute("""
-            UPDATE main.kabko
+            UPDATE prediksicovidjatim.kabko
             SET outbreak_shift=%s, last_fit=%s
             WHERE kabko=%s
         """, (outbreak_shift, tanggal, kabko,))
     else:
         cur.execute("""
-            UPDATE main.kabko
+            UPDATE prediksicovidjatim.kabko
             SET outbreak_shift=%s, last_fit=current_date
             WHERE kabko=%s
         """, (outbreak_shift, kabko,))
@@ -271,7 +271,7 @@ def _update_scores(kabko, datasets, scorer, test, cur):
     values = [keys + v for v in values]
     score_args_str_full = ','.join(cur.mogrify(score_args_str, x).decode('utf-8') for x in values)
     sql = """
-        INSERT INTO main.scores(%s) VALUES %s
+        INSERT INTO prediksicovidjatim.scores(%s) VALUES %s
         ON CONFLICT (%s) DO UPDATE SET
             %s
     """ % (score_columns_full_str, score_args_str_full, score_keys_str, score_updates_str)
@@ -291,7 +291,7 @@ def _init_weights(cur):
         SELECT 
             dataset,
             weight
-        FROM main.dataset
+        FROM prediksicovidjatim.dataset
     """)
     
     weights = dict(cur.fetchall())
@@ -338,7 +338,7 @@ def _fetch_scores(kabko, cur):
     cur.execute("""
         SELECT 
             test, d.text, nvarys, max_error, mae, rmse, rmsle, r2, r2_adj, smape, mase, redchi, aic, aicc, bic
-        FROM main.scores s, main.dataset d
+        FROM prediksicovidjatim.scores s, prediksicovidjatim.dataset d
         WHERE s.dataset=d.dataset AND s.kabko=%s
         ORDER BY s.test ASC, d.order ASC
     """, (kabko,))
@@ -358,7 +358,7 @@ def _fetch_scores_flat(cur):
     cur.execute("""
         SELECT 
             s.test, s.kabko, k.text, mae, rmse, rmsle, r2_adj, smape, mase, redchi, aicc, bic
-        FROM main.scores s, main.kabko k
+        FROM prediksicovidjatim.scores s, prediksicovidjatim.kabko k
         WHERE s.kabko=k.kabko AND s.dataset='flat'
         ORDER BY s.test, k.kabko
     """)
@@ -378,7 +378,7 @@ def _fetch_scores_avg(cur):
     cur.execute("""
         SELECT 
             s.test, s.kabko, k.text, mae, rmse, rmsle, r2_adj, smape, mase, redchi, aicc, bic
-        FROM main.scores_avg s, main.kabko k
+        FROM prediksicovidjatim.scores_avg s, prediksicovidjatim.kabko k
         WHERE s.kabko=k.kabko
         ORDER BY s.test, k.kabko
     """)

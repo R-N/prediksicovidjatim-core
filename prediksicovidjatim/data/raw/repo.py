@@ -17,13 +17,13 @@ def save_data(data, upsert=False):
         
         if upsert:
             cur.execute("""
-                INSERT INTO main.raw_covid_data(%s) VALUES %s
+                INSERT INTO prediksicovidjatim.raw_covid_data(%s) VALUES %s
                 ON CONFLICT (kabko, tanggal) DO UPDATE SET
                     %s
             """ % (columns_str, args_str, updates_str))
         else:
             cur.execute("""
-                INSERT INTO main.raw_covid_data(%s) VALUES %s
+                INSERT INTO prediksicovidjatim.raw_covid_data(%s) VALUES %s
                 ON CONFLICT (kabko, tanggal) DO NOTHING
             """ % (columns_str, args_str))
         
@@ -45,12 +45,12 @@ def get_oldest_tanggal(kabko, cur=None):
 def _get_oldest_tanggal(kabko, cur):
     if kabko:
         cur.execute("""
-            SELECT min(tanggal) FROM main.raw_covid_data
+            SELECT min(tanggal) FROM prediksicovidjatim.raw_covid_data
             WHERE kabko=%s AND (%s)
         """ % ("%s", non_zero_filter), (kabko,))
     else:
         cur.execute("""
-            SELECT min(tanggal) FROM main.raw_covid_data
+            SELECT min(tanggal) FROM prediksicovidjatim.raw_covid_data
             WHERE (%s)
         """ % (non_zero_filter,))
     
@@ -65,7 +65,7 @@ def get_latest_tanggal(cur=None):
             
 def _get_latest_tanggal(cur):
     cur.execute("""
-        SELECT max(tanggal) FROM main.raw_covid_data
+        SELECT max(tanggal) FROM prediksicovidjatim.raw_covid_data
     """)
     
     return cur.fetchone()[0]
@@ -74,10 +74,10 @@ def trim_early_zeros():
     global non_zero_filter
     with database.get_conn() as conn, conn.cursor() as cur:
         cur.execute("""
-            DELETE FROM main.raw_covid_data d1
+            DELETE FROM prediksicovidjatim.raw_covid_data d1
             WHERE d1.tanggal < (
                 SELECT d2.tanggal FROM (
-                    SELECT d3.kabko, MIN(d3.tanggal) AS tanggal FROM main.raw_covid_data d3
+                    SELECT d3.kabko, MIN(d3.tanggal) AS tanggal FROM prediksicovidjatim.raw_covid_data d3
                     WHERE %s
                     GROUP BY d3.kabko
                 ) d2 WHERE d2.kabko=d1.kabko
@@ -96,7 +96,7 @@ def fetch_kabko(cur=None):
         
 def _fetch_kabko(cur):
     cur.execute("""
-        SELECT kabko FROM main.kabko
+        SELECT kabko FROM prediksicovidjatim.kabko
         ORDER BY kabko
     """)
     
@@ -105,7 +105,7 @@ def _fetch_kabko(cur):
 def fetch_kabko_dict():
     with database.get_conn() as conn, conn.cursor() as cur:
         cur.execute("""
-            SELECT kabko, text FROM main.kabko
+            SELECT kabko, text FROM prediksicovidjatim.kabko
             ORDER BY kabko
         """)
         
@@ -114,7 +114,7 @@ def fetch_kabko_dict():
 def fetch_data(kabko):
     with database.get_conn() as conn, conn.cursor(cursor_factory=DictCursor) as cur:
         cur.execute("""
-            SELECT * FROM main.raw_covid_data
+            SELECT * FROM prediksicovidjatim.raw_covid_data
             WHERE kabko=%s
             ORDER BY tanggal
         """, (kabko,))
@@ -130,7 +130,7 @@ def get_latest_data(kabko=None):
             """, (kabko,))
         else:
             cur.execute("""
-                SELECT * FROM main.covid_data_latest
+                SELECT * FROM prediksicovidjatim.covid_data_latest
             """)
         
         return [RawData(**RawData.from_db_row(row)) for row in cur.fetchall()]
@@ -142,7 +142,7 @@ def get_latest_total():
     global sum_columns
     with database.get_conn() as conn, conn.cursor(cursor_factory=DictCursor) as cur:
         cur.execute("""
-            SELECT * FROM main.covid_data_total_latest
+            SELECT * FROM prediksicovidjatim.covid_data_total_latest
         """)
         
         return [RawData(**RawData.from_db_row(row)) for row in cur.fetchall()]

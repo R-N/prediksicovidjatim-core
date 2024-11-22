@@ -16,7 +16,7 @@ def _fetch_kapasitas_rs(kabko, cur):
             kabko,
             tanggal,
             kapasitas
-        FROM main.kapasitas_rs
+        FROM prediksicovidjatim.kapasitas_rs
         WHERE kabko=%s
         ORDER BY tanggal ASC
     """, (kabko,))
@@ -36,7 +36,7 @@ def _fetch_kapasitas_rs_latest(cur):
             kabko,
             tanggal,
             kapasitas
-        FROM main.kapasitas_rs_latest
+        FROM prediksicovidjatim.kapasitas_rs_latest
         ORDER BY kabko
     """)
     
@@ -61,7 +61,7 @@ def _insert_kapasitas_rs(data, cur):
         args_str = ','.join(cur.mogrify(values_template, x).decode('utf-8') for x in data)
         
         cur.execute("""
-            INSERT INTO main.kapasitas_rs(%s) VALUES %s
+            INSERT INTO prediksicovidjatim.kapasitas_rs(%s) VALUES %s
             ON CONFLICT (kabko, tanggal) DO UPDATE SET
                 %s
         """ % (columns_str, args_str, updates_str))
@@ -86,21 +86,21 @@ def fix_kapasitas(cur=None):
     
 def _fix_kapasitas(cur):
     cur.execute("""
-        UPDATE main.kapasitas_rs
+        UPDATE prediksicovidjatim.kapasitas_rs
         SET kapasitas=
-            CASE WHEN krs2.max_rs > main.kapasitas_rs.kapasitas
+            CASE WHEN krs2.max_rs > prediksicovidjatim.kapasitas_rs.kapasitas
                 THEN krs2.max_rs
-                ELSE main.kapasitas_rs.kapasitas
+                ELSE prediksicovidjatim.kapasitas_rs.kapasitas
             END
         FROM (
             SELECT krs1.kabko, krs0.since_tanggal, krs0.max_rs
-            FROM main.kapasitas_rs krs1, (
+            FROM prediksicovidjatim.kapasitas_rs krs1, (
                 SELECT krs.kabko, MAX(krs.tanggal) AS since_tanggal, rcd2.max_rs
-                FROM main.kapasitas_rs krs, (
+                FROM prediksicovidjatim.kapasitas_rs krs, (
                     SELECT rcd1.kabko, rcd0.max_rs, MIN(rcd1.tanggal) AS min_tanggal
-                    FROM main.raw_covid_data rcd1, (
+                    FROM prediksicovidjatim.raw_covid_data rcd1, (
                         SELECT rcd.kabko, MAX(rcd.pos_rawat_rs) AS "max_rs"
-                        FROM main.raw_covid_data rcd
+                        FROM prediksicovidjatim.raw_covid_data rcd
                         GROUP BY rcd.kabko
                     ) rcd0
                     WHERE rcd1.kabko=rcd0.kabko AND rcd1.pos_rawat_rs=rcd0.max_rs
@@ -113,13 +113,13 @@ def _fix_kapasitas(cur):
             ) krs0
             WHERE krs1.kabko=krs0.kabko AND krs1.tanggal=krs0.since_tanggal
         ) krs2
-        WHERE main.kapasitas_rs.kabko=krs2.kabko AND tanggal>=krs2.since_tanggal
+        WHERE prediksicovidjatim.kapasitas_rs.kabko=krs2.kabko AND tanggal>=krs2.since_tanggal
     """)
     cur.execute("""
-        DELETE FROM main.kapasitas_rs
+        DELETE FROM prediksicovidjatim.kapasitas_rs
         WHERE (kabko, tanggal) IN (
             SELECT krs1.kabko, krs1.tanggal
-            FROM main.latest_two_kapasitas_rs krs1, main.latest_two_kapasitas_rs krs2
+            FROM prediksicovidjatim.latest_two_kapasitas_rs krs1, prediksicovidjatim.latest_two_kapasitas_rs krs2
             WHERE krs1.kabko=krs2.kabko AND krs1.r=1 AND krs2.r=2
                 AND krs1.kapasitas=krs2.kapasitas
         )

@@ -14,20 +14,20 @@ def _fetch_kabko_need_mapping(tanggal, any, cur):
     if any:
         cur.execute("""
             SELECT k.kabko, k.map_chunk_size
-            FROM main.kabko k
+            FROM prediksicovidjatim.kabko k
             ORDER BY k.kabko
         """)
     elif tanggal:
         cur.execute("""
             SELECT k.kabko, k.map_chunk_size
-            FROM main.kabko k
+            FROM prediksicovidjatim.kabko k
             WHERE k.last_map<%s
             ORDER BY k.kabko
         """, (tanggal,))
     else:
         cur.execute("""
             SELECT k.kabko, k.map_chunk_size
-            FROM main.kabko k
+            FROM prediksicovidjatim.kabko k
             WHERE k.last_map<k.last_fit
             ORDER BY k.kabko
         """)
@@ -56,7 +56,7 @@ def _fetch_real_data(kabko, cur):
             d.pos_meninggal,
             d.pos_sembuh,
             d.pos_total
-        FROM main.kabko k, main.raw_covid_data d
+        FROM prediksicovidjatim.kabko k, prediksicovidjatim.raw_covid_data d
         WHERE k.kabko=%s AND d.kabko=k.kabko
         ORDER BY tanggal
     """, (kabko,))
@@ -76,26 +76,26 @@ def _set_updated(kabko, tanggal, chunk_size, cur):
     if tanggal:
         if chunk_size:
             cur.execute("""
-                UPDATE main.kabko
+                UPDATE prediksicovidjatim.kabko
                 SET last_map=%s, map_chunk_size=%s
                 WHERE kabko = %s
             """, (tanggal, chunk_size, kabko))
         else:
             cur.execute("""
-                UPDATE main.kabko
+                UPDATE prediksicovidjatim.kabko
                 SET last_map=%s
                 WHERE kabko = %s
             """, (tanggal, kabko))
     else:
         if chunk_size:
             cur.execute("""
-                UPDATE main.kabko
+                UPDATE prediksicovidjatim.kabko
                 SET last_map=last_fit, map_chunk_size=%s
                 WHERE kabko = %s
             """, (chunk_size, kabko))
         else:
             cur.execute("""
-                UPDATE main.kabko
+                UPDATE prediksicovidjatim.kabko
                 SET last_map=last_fit
                 WHERE kabko = %s
             """, kabko)
