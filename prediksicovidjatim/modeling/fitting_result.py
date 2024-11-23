@@ -1,10 +1,22 @@
-from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, mean_squared_error, mean_squared_log_error, median_absolute_error, r2_score, mean_tweedie_deviance, r2_score
-from scipy.stats import shapiro, pearsonr, f_oneway, kstest, ks_2samp
 import numpy as np
-from .. import util
-from statsmodels.stats.stattools import durbin_watson
-from statsmodels.sandbox.stats.runs import runstest_1samp
 import math
+from .. import util
+try:
+    from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, mean_squared_error, mean_squared_log_error, median_absolute_error, r2_score, mean_tweedie_deviance
+except ImportError:
+    pass
+try:
+    from scipy.stats import shapiro, pearsonr, f_oneway, kstest, ks_2samp
+except ImportError:
+    pass
+try:
+    from statsmodels.stats.stattools import durbin_watson
+except ImportError:
+    pass
+try:
+    from statsmodels.sandbox.stats.runs import runstest_1samp
+except ImportError:
+    pass
 
 class BaseScorer:
     def __init__(self, data, pred, dely_conf, dely_pred, nvarys=None, train_mean=None, indexes=None, x=None):

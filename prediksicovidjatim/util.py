@@ -1,16 +1,30 @@
 from datetime import datetime, date, timezone
-import numpy as np
-import matplotlib.dates as mdates
-import matplotlib.pyplot as plt
 import math
 from datetime import timedelta
 from operator import add
-from sklearn.model_selection import TimeSeriesSplit
-from . import config
 import calendar
 from threading import RLock
-import line_profiler
-lprofile = line_profiler.LineProfiler()
+from . import config
+try:
+    import numpy as np
+except ImportError:
+    np = None
+try:
+    import matplotlib.dates as mdates
+    import matplotlib.pyplot as plt
+except ImportError:
+    mdates = None
+    plt = None
+try:
+    from sklearn.model_selection import TimeSeriesSplit
+except ImportError:
+    pass
+try:
+    import line_profiler
+    lprofile = line_profiler.LineProfiler()
+except ImportError:
+    lprofile = None
+
 #import atexit
 #atexit.register(lprofile.print_stats)
 

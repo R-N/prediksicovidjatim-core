@@ -1,7 +1,7 @@
 from ... import util, database
 from itertools import accumulate
 import numpy as np
-from ...modeling import SeicrdRlcModel, SeicrdRlExtModel, SeicrdRlModel, SeicrdRModel, SeicrdModel, SeirdModel, BaseModel
+#from ...modeling import SeicrdRlcModel, SeicrdRlExtModel, SeicrdRlModel, SeicrdRModel, SeicrdModel, SeirdModel, BaseModel
 import math
 from lmfit import Model, Parameters
         
@@ -164,16 +164,22 @@ class KabkoData:
     def get_params_needed(option):
         params_needed = None
         if option == "seicrd_rlc":
+            from ...modeling import SeicrdRlcModel
             params_needed = SeicrdRlcModel.params
         elif option == "seicrd_rl_ext":
+            from ...modeling import SeicrdRlExtModel
             params_needed = SeicrdRlExtModel.params
         elif option == "seicrd_rl":
+            from ...modeling import SeicrdRlModel
             params_needed = SeicrdRlModel.params
         elif option == "seicrd_r":
+            from ...modeling import SeicrdRModel
             params_needed = SeicrdRModel.params
         elif option == "seicrd":
+            from ...modeling import SeicrdModel
             params_needed = SeicrdModel.params
         elif option == "seird":
+            from ...modeling import SeirdModel
             params_needed = SeirdModel.params
         else:
             raise ValueError("Invalid option: " + str(option))

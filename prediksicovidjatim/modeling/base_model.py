@@ -1,5 +1,12 @@
 import numpy as np
-import lmfit
+try:
+    from lmfit import Parameters
+except ImportError:
+    pass
+try:
+    from lmfit import Model, Minimizer
+except ImportError:
+    pass
 from .. import util
 from .fitting_result import FittingResult, BaseScorer
 import math
@@ -54,10 +61,10 @@ class BaseModel:
         if sigma_pred is None:
             sigma_pred=sigma_conf
             
-        params = lmfit.Parameters()
+        params = Parameters()
         params_f = params.add
         
-        #mod = lmfit.Model(self.fitter_flat)
+        #mod = Model(self.fitter_flat)
         
         outbreak_shift = outbreak_shift or self.kabko.outbreak_shift(
             1.0/self.kabko.params["infectious_rate"].init
@@ -70,7 +77,7 @@ class BaseModel:
         self.kabko.apply_params(params)
         
         #params = mod.make_params()
-        mod = lmfit.Minimizer(self.objective, params, nan_policy='propagate')
+        mod = Minimizer(self.objective, params, nan_policy='propagate')
         
         y_data_0 = self.kabko.get_datasets_values(self.datasets, outbreak_shift)
         

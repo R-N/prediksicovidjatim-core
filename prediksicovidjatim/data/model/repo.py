@@ -1,7 +1,10 @@
 from ... import util, database
 from ..model.entities import KabkoData, DayData, ParamData, RtData
 from ..raw.repo import fetch_kabko, fetch_kabko_dict, get_latest_tanggal, get_oldest_tanggal
-from ...modeling import BaseModel
+try:
+    from ...modeling.base_model import BaseModel
+except ImportError:
+    BaseModel = None
 
 
 def fetch_kabko_need_fitting(tanggal, cur=None):
@@ -150,7 +153,7 @@ def _get_kabko(kabko, cur):
             population,
             outbreak_shift,
             fpd.tanggal AS first_positive,
-            rcd.pos_total AS seed,	
+            rcd.pos_total AS seed,  
             CASE WHEN k.kabko IN (
                 SELECT DISTINCT s.kabko
                 FROM prediksicovidjatim.scores s
@@ -287,6 +290,9 @@ def init_weights(cur=None):
             return _init_weights(cur)
     
 def _init_weights(cur):
+    if not BaseModel:
+        return
+
     cur.execute("""
         SELECT 
             dataset,

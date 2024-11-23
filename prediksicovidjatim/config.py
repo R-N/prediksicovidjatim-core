@@ -1,5 +1,7 @@
-import matplotlib
-import matplotlib.pyplot as plt
+try:
+    import matplotlib.pyplot as plt
+except ImportError:
+    plt = None
 
 FONT_SMALL = 12
 FONT_MEDIUM = 14
@@ -12,6 +14,9 @@ FIRST_TANGGAL = "2020-03-20"
 PREDICT_DAYS = 30
 
 def init_plot(font_small=None, font_medium=None, font_big=None, fig_size=None, line_width=None):
+    if not plt:
+        return
+
     global FONT_SMALL
     global FONT_MEDIUM
     global FONT_BIG

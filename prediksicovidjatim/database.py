@@ -3,9 +3,12 @@ import psycopg2
 import psycopg2.pool
 from psycopg2.extras import DictCursor, execute_batch
 from contextlib import contextmanager
-from dotenv import load_dotenv
 from threading import Semaphore
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
