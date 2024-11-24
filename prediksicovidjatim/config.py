@@ -1,6 +1,6 @@
 try:
     import matplotlib.pyplot as plt
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     plt = None
 
 FONT_SMALL = 12

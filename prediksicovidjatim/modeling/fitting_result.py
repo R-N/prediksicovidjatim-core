@@ -3,19 +3,19 @@ import math
 from .. import util
 try:
     from sklearn.metrics import explained_variance_score, max_error, mean_absolute_error, mean_squared_error, mean_squared_log_error, median_absolute_error, r2_score, mean_tweedie_deviance
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     pass
 try:
     from scipy.stats import shapiro, pearsonr, f_oneway, kstest, ks_2samp
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     pass
 try:
     from statsmodels.stats.stattools import durbin_watson
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     pass
 try:
     from statsmodels.sandbox.stats.runs import runstest_1samp
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     pass
 
 class BaseScorer:

@@ -7,7 +7,7 @@ from threading import Semaphore
 try:
     from dotenv import load_dotenv
     load_dotenv()
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     pass
 
 DATABASE_URL = os.getenv("DATABASE_URL")

@@ -3,7 +3,7 @@ from ..model.entities import KabkoData, DayData, ParamData, RtData
 from ..raw.repo import fetch_kabko, fetch_kabko_dict, get_latest_tanggal, get_oldest_tanggal
 try:
     from ...modeling.base_model import BaseModel
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     BaseModel = None
 
 

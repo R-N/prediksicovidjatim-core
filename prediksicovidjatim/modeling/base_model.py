@@ -1,11 +1,11 @@
 import numpy as np
 try:
     from lmfit import Parameters
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     pass
 try:
     from lmfit import Model, Minimizer
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     pass
 from .. import util
 from .fitting_result import FittingResult, BaseScorer

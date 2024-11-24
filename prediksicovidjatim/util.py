@@ -7,22 +7,22 @@ from threading import RLock
 from . import config
 try:
     import numpy as np
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     np = None
 try:
     import matplotlib.dates as mdates
     import matplotlib.pyplot as plt
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     mdates = None
     plt = None
 try:
     from sklearn.model_selection import TimeSeriesSplit
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     pass
 try:
     import line_profiler
     lprofile = line_profiler.LineProfiler()
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     lprofile = None
 
 #import atexit
