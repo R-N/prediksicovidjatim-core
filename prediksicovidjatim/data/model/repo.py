@@ -18,7 +18,7 @@ def _fetch_kabko_need_fitting(tanggal, cur):
     cur.execute("""
         SELECT k.kabko
         FROM prediksicovidjatim.kabko k
-        WHERE k.last_fit<%s
+        WHERE k.last_fit<%s OR k.last_fit IS NULL
         ORDER BY k.kabko
     """, (tanggal,))
     

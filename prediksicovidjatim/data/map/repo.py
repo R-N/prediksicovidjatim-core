@@ -21,14 +21,14 @@ def _fetch_kabko_need_mapping(tanggal, any, cur):
         cur.execute("""
             SELECT k.kabko, k.map_chunk_size
             FROM prediksicovidjatim.kabko k
-            WHERE k.last_map<%s
+            WHERE k.last_map<%s OR k.last_map IS NULL
             ORDER BY k.kabko
         """, (tanggal,))
     else:
         cur.execute("""
             SELECT k.kabko, k.map_chunk_size
             FROM prediksicovidjatim.kabko k
-            WHERE k.last_map<k.last_fit
+            WHERE k.last_map<k.last_fit OR k.last_map IS NULL
             ORDER BY k.kabko
         """)
         
