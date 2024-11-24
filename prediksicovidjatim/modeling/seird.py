@@ -3,7 +3,10 @@ try:
     from scipy.integrate import odeint
 except (ModuleNotFoundError, ImportError):
     odeint = None
-import lmfit
+try:
+    from lmfit import Model
+except (ModuleNotFoundError, ImportError):
+    Model = None
 from .. import util
 from .base_model import BaseModel
 
@@ -76,7 +79,7 @@ class SeirdModel(BaseModel):
         return dead[x]
     
     def fit(self):
-        mod = lmfit.Model(self.fitter)
+        mod = Model(self.fitter)
         
         self.kabko.apply_params(mod)
         

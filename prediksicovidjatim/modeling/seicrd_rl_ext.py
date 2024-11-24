@@ -3,7 +3,6 @@ try:
     from scipy.integrate import odeint
 except (ModuleNotFoundError, ImportError):
     odeint = None
-import lmfit
 from .. import util
 from .base_model import BaseModel
 
