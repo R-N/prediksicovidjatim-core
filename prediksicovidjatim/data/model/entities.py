@@ -3,7 +3,11 @@ from itertools import accumulate
 import numpy as np
 #from ...modeling import SeicrdRlcModel, SeicrdRlExtModel, SeicrdRlModel, SeicrdRModel, SeicrdModel, SeirdModel, BaseModel
 import math
-from lmfit import Model, Parameters
+try:
+    from lmfit import Model, Parameters
+except (ModuleNotFoundError, ImportError):
+    Model = None
+    Parameters = None
         
 class KabkoData:
     def __init__(self, kabko, text, population, outbreak_shift, first_positive, seed, scored, data, kapasitas_rs, rt, params):
