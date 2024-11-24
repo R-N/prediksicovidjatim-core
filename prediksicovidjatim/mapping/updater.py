@@ -24,7 +24,7 @@ class MapUpdater:
     def __init__(self, portal, user, pw, chunk_size=100):
         self.credentials = (portal, user, pw)
         self.chunk_size = chunk_size
-        self.login()
+        #self.login()
         
     def login(self):
         self.gis = GIS(*self.credentials)
