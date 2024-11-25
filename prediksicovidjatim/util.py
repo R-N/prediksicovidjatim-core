@@ -25,6 +25,7 @@ try:
 except (ModuleNotFoundError, ImportError):
     lprofile = None
 
+START_DATE = "2020-03-20"
 #import atexit
 #atexit.register(lprofile.print_stats)
 
@@ -153,6 +154,14 @@ def shift_date(init, shift):
 def date_range(init, length, start=0):
     init = parse_date(init) if isinstance(init, str) else init
     return [shift_date(init, x) for x in range(start, length+start)]
+
+def days_since(current_date, start_date=START_DATE):
+    start_date = parse_date(start_date)
+    current_date = parse_date(current_date)
+    
+    difference = (current_date - start_date).total_seconds() / 86400  # 86400 seconds in a day
+    
+    return round(difference)
     
 def filter_dates_after(dates, after):
     if after is None:

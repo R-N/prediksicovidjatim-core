@@ -35,11 +35,15 @@ class MapDataReal:
 
     def tanggal_iso(self):
         return util.date_to_iso(self.tanggal)
+    
+    def hari(self, tanggal_start):
+        return util.days_since(self.tanggal, tanggal_start)
         
-    def _apply(self, attributes):
+    def _apply(self, attributes, start_date=util.START_DATE):
         attributes["kabko"] = self.kabko
         attributes["tanggal_ms"] = self.tanggal_ms()
         attributes["tanggal_iso"] = self.tanggal_iso()
+        attributes["hari"] = self.hari(start_date)
         attributes["populasi"] = self.populasi
         attributes["otg"] = self.otg
         attributes["odp_aktif"] = self.odp_aktif
@@ -96,11 +100,15 @@ class MapDataPred:
         
     def tanggal_iso(self):
         return util.date_to_iso(self.tanggal)
+    
+    def hari(self, tanggal_start):
+        return util.days_since(self.tanggal, tanggal_start)
         
-    def _apply(self, attributes):
+    def _apply(self, attributes, start_date=util.START_DATE):
         attributes["kabko"] = self.kabko
         attributes["tanggal_ms"] = self.tanggal_ms()
         attributes["tanggal_iso"] = self.tanggal_iso()
+        attributes["hari"] = self.hari(start_date)
         attributes["populasi"] = self.populasi
         attributes["pos_aktif"] = self.pos_aktif
         attributes["pos_rs"] = self.pos_rs
