@@ -143,6 +143,10 @@ def date_to_ms(d):
     d = parse_date(d) if isinstance(d, str) else d
     return int(calendar.timegm(d.timetuple()) * 1e3)
     
+def date_to_iso(d):
+    d = parse_date(d) if isinstance(d, str) else d
+    return d.isoformat() #.strftime("%Y-%m-%dT%H:%M:%S")
+    
 def shift_date(init, shift):
     return init + timedelta(days=shift)
     

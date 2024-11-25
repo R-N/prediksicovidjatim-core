@@ -32,10 +32,14 @@ class MapDataReal:
         
     def tanggal_ms(self):
         return util.date_to_ms(self.tanggal)
+
+    def tanggal_iso(self):
+        return util.date_to_iso(self.tanggal)
         
     def _apply(self, attributes):
         attributes["kabko"] = self.kabko
-        attributes["tanggal"] = self.tanggal_ms()
+        attributes["tanggal_ms"] = self.tanggal_ms()
+        attributes["tanggal_iso"] = self.tanggal_iso()
         attributes["populasi"] = self.populasi
         attributes["otg"] = self.otg
         attributes["odp_aktif"] = self.odp_aktif
