@@ -96,7 +96,8 @@ class MapDataPred:
         
     def _apply(self, attributes):
         attributes["kabko"] = self.kabko
-        attributes["tanggal"] = self.tanggal_ms()
+        attributes["tanggal_ms"] = self.tanggal_ms()
+        attributes["tanggal_iso"] = self.tanggal_iso()
         attributes["populasi"] = self.populasi
         attributes["pos_aktif"] = self.pos_aktif
         attributes["pos_rs"] = self.pos_rs
