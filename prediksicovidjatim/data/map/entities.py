@@ -94,6 +94,9 @@ class MapDataPred:
     def tanggal_ms(self):
         return util.date_to_ms(self.tanggal)
         
+    def tanggal_iso(self):
+        return util.date_to_iso(self.tanggal)
+        
     def _apply(self, attributes):
         attributes["kabko"] = self.kabko
         attributes["tanggal_ms"] = self.tanggal_ms()
